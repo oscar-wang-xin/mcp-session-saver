@@ -93,8 +93,7 @@ npx mcp-session-saver
 {
   "mcpServers": {
     "session-saver": {
-      "command": "node",
-      "args": ["d:\\Server\\www\\_code\\mcp_save_session\\index.js"],
+      "command": "mcp-session-saver",
       "env": {
         "MCP_SESSION_BASE_DIR": "D:\\Administrator\\Documents\\ide_sessions"
       }
