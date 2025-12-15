@@ -5,3 +5,5 @@ node_modules/
 sessions/
 test_sessions/
 config.json
+test.js
+qoder_mcp_config.json
