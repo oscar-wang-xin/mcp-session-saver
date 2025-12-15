@@ -53,6 +53,93 @@ npm test
 
 ### 配置默认保存路径（可选但推荐）
 
+有三种方式可以配置默认保存路径，按优先级从高到低：
+
+#### 方法1：在MCP配置文件中设置环境变量（推荐）
+
+在MCP客户端的配置文件中，通过 `env` 字段设置环境变量 `MCP_SESSION_BASE_DIR`。
+
+**Windows 系统：**
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "node",
+      "args": ["d:\\Server\\www\\_code\\mcp_save_session\\index.js"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "D:\\Users\\YourName\\Documents\\ide_sessions"
+      }
+    }
+  }
+}
+```
+
+**macOS 系统：**
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "node",
+      "args": ["/path/to/mcp_save_session/index.js"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "/Users/yourname/Documents/ide_sessions"
+      }
+    }
+  }
+}
+```
+或者使用快捷路径：
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "node",
+      "args": ["/path/to/mcp_save_session/index.js"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "~/Documents/ide_sessions"
+      }
+    }
+  }
+}
+```
+
+**Linux 系统：**
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "node",
+      "args": ["/path/to/mcp_save_session/index.js"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "/home/yourname/Documents/ide_sessions"
+      }
+    }
+  }
+}
+```
+或者使用快捷路径：
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "node",
+      "args": ["/path/to/mcp_save_session/index.js"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "~/Documents/ide_sessions"
+      }
+    }
+  }
+}
+```
+
+**此方法的优势：**
+- ✅ 配置集中管理，与MCP服务配置在一起
+- ✅ 优先级高于config.json
+- ✅ 不需要单独创建config.json文件
+- ✅ 重启MCP客户端后立即生效
+
+#### 方法2：使用config.json配置文件
+
 在项目根目录创建 `config.json` 文件来配置默认会话保存路径。
 
 **步骤1: 创建配置文件**
@@ -93,6 +180,11 @@ npm test
 }
 ```
 
+**此方法的优势：**
+- ✅ 不依赖MCP客户端配置
+- ✅ 可以独立管理
+- ✅ 适合开发和测试环境
+
 **步骤2: 路径格式说明**
 
 | 操作系统 | 路径分隔符 | 示例 | 支持 ~ |
@@ -103,8 +195,17 @@ npm test
 
 **配置优先级:**
 ```
-调用时指定的 base_dir > config.json 中的配置 > 默认路径 ~/Documents/ide_sessions
+调用时指定的 base_dir > 环境变量 MCP_SESSION_BASE_DIR > config.json 中的配置 > 默认路径 ~/Documents/ide_sessions
 ```
+
+**配置方法对比：**
+
+| 方法 | 优先级 | 配置位置 | 适用场景 |
+|------|---------|----------|----------|
+| base_dir参数 | 最高 | 调用时传入 | 临时指定不同路径 |
+| 环境变量MCP_SESSION_BASE_DIR | 高 | MCP配置文件的env字段 | 生产环境推荐 |
+| config.json | 中 | 项目根目录 | 开发测试环境 |
+| 默认路径 | 最低 | ~/Documents/ide_sessions | 备用方案 |
 
 **配置后的优势:**
 - ✅ 使用工具时无需每次指定 `base_dir`
@@ -321,11 +422,19 @@ D:/Administrator/Documents/ide_sessions/
   "mcpServers": {
     "session-saver": {
       "command": "node",
-      "args": ["D:\\path\\to\\mcp_save_session\\index.js"]
+      "args": ["D:\\path\\to\\mcp_save_session\\index.js"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "D:\\Users\\YourName\\Documents\\ide_sessions"
+      }
     }
   }
 }
 ```
+
+**说明：**
+- `args`: 指定index.js的绝对路径
+- `env.MCP_SESSION_BASE_DIR`: 设置会话保存的默认目录（可选）
+- Windows路径需要使用双反斜杠 `\\` 转义
 
 ### 2. Cline (VSCode插件)
 
@@ -336,11 +445,17 @@ D:/Administrator/Documents/ide_sessions/
   "mcpServers": {
     "session-saver": {
       "command": "node",
-      "args": ["D:\\path\\to\\mcp_save_session\\index.js"]
+      "args": ["D:\\path\\to\\mcp_save_session\\index.js"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "D:\\Users\\YourName\\Documents\\ide_sessions"
+      }
     }
   }
 }
 ```
+
+**说明：**
+- `env.MCP_SESSION_BASE_DIR`: 可选，设置为你希望的默认保存目录
 
 ### 3. 其他MCP客户端
 
@@ -356,7 +471,7 @@ D:/Administrator/Documents/ide_sessions/
 
 | 参数名 | 类型 | 必需 | 说明 |
 |--------|------|------|------|
-| base_dir | string | **否** | 保存会话的基础目录路径（可选，默认使用配置文件中的路径或 `~/Documents/ide_sessions`） |
+| base_dir | string | **否** | 保存会话的基础目录路径（可选，优先级最高。未指定时依次使用：环境变量MCP_SESSION_BASE_DIR > config.json配置 > 默认路径~/Documents/ide_sessions） |
 | ide_name | string | **是** | IDE名称（如：VSCode, Cursor, Windsurf） |
 | session_description | string | **是** | 会话描述（简短描述会话内容） |
 | content | string | **是** | 会话内容（Markdown格式） |
@@ -397,7 +512,7 @@ D:/Administrator/Documents/ide_sessions/
 
 | 参数名 | 类型 | 必需 | 说明 |
 |--------|------|------|------|
-| base_dir | string | **否** | 会话保存的基础目录路径（可选，默认使用配置文件中的路径） |
+| base_dir | string | **否** | 会话保存的基础目录路径（可选，优先级最高。未指定时依次使用：环境变量MCP_SESSION_BASE_DIR > config.json配置 > 默认路径） |
 | ide_name | string | 否 | 筛选指定IDE的会话 |
 | date_filter | string | 否 | 筛选指定日期的会话（格式: YYYY-MM-DD） |
 

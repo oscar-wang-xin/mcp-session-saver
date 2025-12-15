@@ -118,9 +118,9 @@ npx mcp-session-saver
 ```
 
 ## 📚 文档
-- README.md - 项目说明
-- USAGE.md - 详细使用指南
-- npm 包 - npm 主页
+- [README.md](README.md) - 项目说明
+- [USAGE.md](USAGE.md) - 详细使用指南
+- [npm 包](https://www.npmjs.com/package/mcp-session-saver) - npm 主页
 
 ## 🛠️ 技术栈
 - JavaScript (ES Module)
