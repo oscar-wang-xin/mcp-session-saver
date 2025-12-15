@@ -1,6 +1,6 @@
 {
   "name": "mcp-session-saver",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A Model Context Protocol (MCP) service for saving session records to markdown files, organized by IDE, date, and description",
   "main": "index.js",
   "type": "module",
