@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "mcp-session-saver": "./index.js"
+    "mcp-session-saver": "index.js"
   },
   "scripts": {
     "start": "node index.js",
@@ -43,7 +43,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/oscar-wang-xin/mcp-session-saver.git"
+    "url": "git+https://github.com/oscar-wang-xin/mcp-session-saver.git"
   },
   "bugs": {
     "url": "https://github.com/oscar-wang-xin/mcp-session-saver/issues"
