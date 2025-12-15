@@ -4,6 +4,12 @@
 
 MCP Session Saver 是一个模型上下文协议（MCP）服务，用于将会话记录保存为Markdown文件。它会自动按照**IDE名称、日期、会话描述**组织文件结构。
 
+### 新特性！
+
+- ✨ **配置文件支持**: 通过 `config.json` 一次配置默认路径，多次使用无需重复指定
+- ✨ **智能默认值**: 未配置时自动使用 `~/Documents/ide_sessions`
+- ✨ **参数可选**: `base_dir` 参数变为可选，使用更简单
+
 ## 快速开始
 
 ### 安装依赖
@@ -44,6 +50,67 @@ npm test
 找到 3 个会话记录:
 ...
 ```
+
+### 配置默认保存路径（可选但推荐）
+
+在项目根目录创建 `config.json` 文件来配置默认会话保存路径。
+
+**步骤1: 创建配置文件**
+
+在项目根目录下创建 `config.json`，根据操作系统选择相应格式：
+
+**Windows 系统:**
+```json
+{
+  "defaultBaseDir": "D:\\Users\\YourName\\Documents\\ide_sessions"
+}
+```
+⚠️ **注意**: Windows 路径必须使用双反斜杠 `\\` 转义
+
+**macOS 系统:**
+```json
+{
+  "defaultBaseDir": "/Users/yourname/Documents/ide_sessions"
+}
+```
+或者使用快捷路径：
+```json
+{
+  "defaultBaseDir": "~/Documents/ide_sessions"
+}
+```
+
+**Linux 系统:**
+```json
+{
+  "defaultBaseDir": "/home/yourname/Documents/ide_sessions"
+}
+```
+或者使用快捷路径：
+```json
+{
+  "defaultBaseDir": "~/Documents/ide_sessions"
+}
+```
+
+**步骤2: 路径格式说明**
+
+| 操作系统 | 路径分隔符 | 示例 | 支持 ~ |
+|----------|----------|------|----------|
+| Windows  | `\\` (双反斜杠) | `D:\\Users\\...` | ✗ |
+| macOS    | `/` (正斜杠) | `/Users/...` | ✓ |
+| Linux    | `/` (正斜杠) | `/home/...` | ✓ |
+
+**配置优先级:**
+```
+调用时指定的 base_dir > config.json 中的配置 > 默认路径 ~/Documents/ide_sessions
+```
+
+**配置后的优势:**
+- ✅ 使用工具时无需每次指定 `base_dir`
+- ✅ 统一管理所有会话保存位置
+- ✅ 更简洁的API调用
+- ✅ 仍可在需要时临时指定其他路径
 
 ## 运行和部署
 
@@ -289,14 +356,24 @@ D:/Administrator/Documents/ide_sessions/
 
 | 参数名 | 类型 | 必需 | 说明 |
 |--------|------|------|------|
-| base_dir | string | 是 | 保存会话的基础目录路径 |
-| ide_name | string | 是 | IDE名称（如：VSCode, Cursor, Windsurf） |
-| session_description | string | 是 | 会话描述（简短描述会话内容） |
-| content | string | 是 | 会话内容（Markdown格式） |
+| base_dir | string | **否** | 保存会话的基础目录路径（可选，默认使用配置文件中的路径或 `~/Documents/ide_sessions`） |
+| ide_name | string | **是** | IDE名称（如：VSCode, Cursor, Windsurf） |
+| session_description | string | **是** | 会话描述（简短描述会话内容） |
+| content | string | **是** | 会话内容（Markdown格式） |
 | session_time | string | 否 | 会话时间（ISO 8601格式，默认当前时间） |
 
 **示例调用：**
 
+使用配置文件（简单）：
+```json
+{
+  "ide_name": "VSCode",
+  "session_description": "实现用户登录功能",
+  "content": "# 今日工作\n\n- 完成用户登录功能\n- 修复3个bug"
+}
+```
+
+指定特定路径：
 ```json
 {
   "base_dir": "D:\\Administrator\\Documents\\ide_sessions",
@@ -320,11 +397,35 @@ D:/Administrator/Documents/ide_sessions/
 
 | 参数名 | 类型 | 必需 | 说明 |
 |--------|------|------|------|
-| base_dir | string | 是 | 会话保存的基础目录路径 |
+| base_dir | string | **否** | 会话保存的基础目录路径（可选，默认使用配置文件中的路径） |
 | ide_name | string | 否 | 筛选指定IDE的会话 |
 | date_filter | string | 否 | 筛选指定日期的会话（格式: YYYY-MM-DD） |
 
 **示例调用：**
+
+使用配置文件（简单）：
+
+列出所有会话：
+```json
+{}
+```
+
+列出VSCode的所有会话：
+```json
+{
+  "ide_name": "VSCode"
+}
+```
+
+列出VSCode在 2025-12-15 的所有会话：
+```json
+{
+  "ide_name": "VSCode",
+  "date_filter": "2025-12-15"
+}
+```
+
+指定特定路径：
 
 列出所有会话：
 ```json

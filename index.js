@@ -8,6 +8,32 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import os from 'os';
+
+// 获取当前文件所在目录
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 默认配置
+let config = {
+  defaultBaseDir: path.join(os.homedir(), 'Documents', 'ide_sessions')
+};
+
+// 加载配置文件
+async function loadConfig() {
+  const configPath = path.join(__dirname, 'config.json');
+  try {
+    const configContent = await fs.readFile(configPath, 'utf-8');
+    const userConfig = JSON.parse(configContent);
+    config = { ...config, ...userConfig };
+  } catch (error) {
+    // 配置文件不存在时使用默认配置
+  }
+}
+
+// 初始化时加载配置
+await loadConfig();
 
 // 创建MCP服务器实例
 const server = new Server(
@@ -226,7 +252,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             base_dir: {
               type: 'string',
-              description: '保存会话的基础目录路径',
+              description: '保存会话的基础目录路径(可选,默认使用配置文件中的路径或 ~/Documents/ide_sessions)',
             },
             ide_name: {
               type: 'string',
@@ -245,7 +271,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: '会话时间(ISO 8601格式,可选,默认为当前时间)',
             },
           },
-          required: ['base_dir', 'ide_name', 'session_description', 'content'],
+          required: ['ide_name', 'session_description', 'content'],
         },
       },
       {
@@ -256,7 +282,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             base_dir: {
               type: 'string',
-              description: '会话保存的基础目录路径',
+              description: '会话保存的基础目录路径(可选,默认使用配置文件中的路径)',
             },
             ide_name: {
               type: 'string',
@@ -267,7 +293,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: '日期过滤(可选,格式: YYYY-MM-DD)',
             },
           },
-          required: ['base_dir'],
+          required: [],
         },
       },
     ],
@@ -282,9 +308,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (name === 'save_session') {
       const { base_dir, ide_name, session_description, content, session_time } = args;
       
+      // 使用用户指定的目录或默认配置
+      const targetBaseDir = base_dir || config.defaultBaseDir;
+      
       const sessionDate = session_time ? new Date(session_time) : new Date();
       const filePath = await saveSession(
-        base_dir,
+        targetBaseDir,
         ide_name,
         session_description,
         content,
@@ -302,7 +331,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     } else if (name === 'list_sessions') {
       const { base_dir, ide_name, date_filter } = args;
       
-      const sessions = await listSessions(base_dir, ide_name, date_filter);
+      // 使用用户指定的目录或默认配置
+      const targetBaseDir = base_dir || config.defaultBaseDir;
+      
+      const sessions = await listSessions(targetBaseDir, ide_name, date_filter);
       
       if (sessions.length === 0) {
         return {

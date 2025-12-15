@@ -1,8 +1,14 @@
 {
-  "mcpServers": {
-    "session-saver": {
-      "command": "node",
-      "args": ["d:\\Server\\www\\_code\\mcp_save_session\\index.js"]
-    }
-  }
+  "defaultBaseDir": "D:\\Administrator\\Documents\\ide_sessions",
+  "_comment": "配置说明 / Configuration Guide",
+  "_examples": {
+    "Windows": "D:\\Users\\YourName\\Documents\\ide_sessions",
+    "macOS": "/Users/yourname/Documents/ide_sessions",
+    "Linux": "/home/yourname/Documents/ide_sessions"
+  },
+  "_notes": [
+    "Windows路径需要使用双反斜杠 \\\\ 转义",
+    "macOS/Linux使用正斜杠 /",
+    "可以使用 ~ 代表用户主目录（仅macOS/Linux）"
+  ]
 }

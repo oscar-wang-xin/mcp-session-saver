@@ -9,6 +9,8 @@
 - ✅ 支持列出已保存的会话记录
 - ✅ 自动清理文件名中的非法字符
 - ✅ 支持自定义会话时间
+- ✨ **配置文件支持** - 一次配置，多次使用
+- ✨ **默认路径** - 无需配置即可使用
 
 ## 目录结构
 
@@ -46,9 +48,50 @@ npm test
 
 ## 配置
 
+### 方式1: 使用配置文件（推荐）
+
+在项目根目录创建 `config.json` 文件，配置默认会话保存路径：
+
+**Windows:**
+```json
+{
+  "defaultBaseDir": "D:\\Users\\YourName\\Documents\\ide_sessions"
+}
+```
+
+**macOS:**
+```json
+{
+  "defaultBaseDir": "/Users/yourname/Documents/ide_sessions"
+}
+```
+
+**Linux:**
+```json
+{
+  "defaultBaseDir": "/home/yourname/Documents/ide_sessions"
+}
+```
+
+**也可以使用快捷路径（macOS/Linux）:**
+```json
+{
+  "defaultBaseDir": "~/Documents/ide_sessions"
+}
+```
+
+**注意事项：**
+- ✅ Windows 路径需要使用双反斜杠 `\\` 转义
+- ✅ macOS/Linux 使用正斜杠 `/`
+- ✅ macOS/Linux 可以使用 `~` 代表用户主目录
+
+配置后，使用工具时可以省略 `base_dir` 参数。
+
+### 方式2: MCP客户端配置
+
 在你的MCP客户端配置文件中添加此服务：
 
-### Claude Desktop 配置
+#### Claude Desktop 配置
 
 编辑配置文件（Windows: `%APPDATA%\Claude\claude_desktop_config.json`）：
 
@@ -63,14 +106,32 @@ npm test
 }
 ```
 
-### Cline/其他MCP客户端配置
+#### 通过 npm 全局安装（推荐）
+
+```bash
+npm install -g mcp-session-saver
+```
+
+配置文件：
 
 ```json
 {
   "mcpServers": {
     "session-saver": {
-      "command": "node",
-      "args": ["d:\\Server\\www\\_code\\mcp_save_session\\index.js"]
+      "command": "mcp-session-saver"
+    }
+  }
+}
+```
+
+#### 使用 npx（无需安装）
+
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "npx",
+      "args": ["mcp-session-saver"]
     }
   }
 }
@@ -80,8 +141,21 @@ npm test
 
 ### 1. 保存会话
 
+#### 使用配置文件（简单）
+
+如果已配置 `config.json`，可以省略 `base_dir` 参数：
+
 ```javascript
-// 调用 save_session 工具
+{
+  "ide_name": "VSCode",
+  "session_description": "实现用户登录功能",
+  "content": "# 今日工作\n\n- 完成了用户登录功能\n- 修复了3个bug\n- 代码审查"
+}
+```
+
+#### 指定保存路径（灵活）
+
+```javascript
 {
   "base_dir": "D:\\Administrator\\Documents\\ide_sessions",
   "ide_name": "VSCode",
@@ -90,10 +164,30 @@ npm test
 }
 ```
 
-可选参数：
+**可选参数：**
 - `session_time`: ISO 8601格式的时间字符串，如 "2025-12-15T10:30:00"
 
 ### 2. 列出会话
+
+#### 使用配置文件（简单）
+
+```javascript
+// 列出所有会话
+{}
+
+// 列出特定IDE的会话
+{
+  "ide_name": "VSCode"
+}
+
+// 列出特定日期的所有会话
+{
+  "ide_name": "VSCode",
+  "date_filter": "2025-12-15"
+}
+```
+
+#### 指定路径
 
 ```javascript
 // 列出所有会话
@@ -122,7 +216,7 @@ npm test
 保存会话记录到Markdown文件。
 
 **参数:**
-- `base_dir` (必需): 保存会话的基础目录路径
+- `base_dir` (可选): 保存会话的基础目录路径，默认使用配置文件中的路径或 `~/Documents/ide_sessions`
 - `ide_name` (必需): IDE名称（如: VSCode, Cursor, Windsurf等）
 - `session_description` (必需): 会话描述（简短描述会话内容）
 - `content` (必需): 会话内容（Markdown格式）
@@ -136,7 +230,7 @@ npm test
 列出已保存的会话记录。
 
 **参数:**
-- `base_dir` (必需): 会话保存的基础目录路径
+- `base_dir` (可选): 会话保存的基础目录路径，默认使用配置文件中的路径
 - `ide_name` (可选): IDE名称，用于筛选
 - `date_filter` (可选): 日期筛选（格式: YYYY-MM-DD）
 
