@@ -32,6 +32,11 @@ async function loadConfig() {
   }
 }
 
+// 从环境变量或MCP配置中获取base_dir（最高优先级）
+function getBaseDirFromEnv() {
+  return process.env.MCP_SESSION_BASE_DIR || null;
+}
+
 // 初始化时加载配置
 await loadConfig();
 
@@ -246,13 +251,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'save_session',
-        description: '保存会话记录到指定目录，按照IDE名称、日期、会话描述组织为Markdown文件',
+        description: '保存会话记录到指定目录，按照IDE名称、日期、会话描述组织为Markdown文件。路径优先级：base_dir参数 > 环境变量MCP_SESSION_BASE_DIR > config.json > 默认路径',
         inputSchema: {
           type: 'object',
           properties: {
             base_dir: {
               type: 'string',
-              description: '保存会话的基础目录路径(可选,默认使用配置文件中的路径或 ~/Documents/ide_sessions)',
+              description: '保存会话的基础目录路径(可选,优先级最高。未指定时依次使用: 环境变量MCP_SESSION_BASE_DIR > config.json配置 > 默认路径~/Documents/ide_sessions)',
             },
             ide_name: {
               type: 'string',
@@ -276,13 +281,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'list_sessions',
-        description: '列出已保存的会话记录',
+        description: '列出已保存的会话记录。路径优先级：base_dir参数 > 环境变量MCP_SESSION_BASE_DIR > config.json > 默认路径',
         inputSchema: {
           type: 'object',
           properties: {
             base_dir: {
               type: 'string',
-              description: '会话保存的基础目录路径(可选,默认使用配置文件中的路径)',
+              description: '会话保存的基础目录路径(可选,优先级最高。未指定时依次使用: 环境变量MCP_SESSION_BASE_DIR > config.json配置 > 默认路径)',
             },
             ide_name: {
               type: 'string',
@@ -308,8 +313,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (name === 'save_session') {
       const { base_dir, ide_name, session_description, content, session_time } = args;
       
-      // 使用用户指定的目录或默认配置
-      const targetBaseDir = base_dir || config.defaultBaseDir;
+      // 优先级：参数 > 环境变量 > config.json > 默认路径
+      const targetBaseDir = base_dir || getBaseDirFromEnv() || config.defaultBaseDir;
       
       const sessionDate = session_time ? new Date(session_time) : new Date();
       const filePath = await saveSession(
@@ -331,8 +336,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     } else if (name === 'list_sessions') {
       const { base_dir, ide_name, date_filter } = args;
       
-      // 使用用户指定的目录或默认配置
-      const targetBaseDir = base_dir || config.defaultBaseDir;
+      // 优先级：参数 > 环境变量 > config.json > 默认路径
+      const targetBaseDir = base_dir || getBaseDirFromEnv() || config.defaultBaseDir;
       
       const sessions = await listSessions(targetBaseDir, ide_name, date_filter);
       

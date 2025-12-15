@@ -1,6 +1,12 @@
 {
   "defaultBaseDir": "D:\\Administrator\\Documents\\ide_sessions",
   "_comment": "配置说明 / Configuration Guide",
+  "_priority": [
+    "1. base_dir参数（tool调用时传入，最高优先级）",
+    "2. 环境变量 MCP_SESSION_BASE_DIR（在MCP配置文件的env中设置）",
+    "3. config.json中的defaultBaseDir",
+    "4. 默认路径 ~/Documents/ide_sessions"
+  ],
   "_examples": {
     "Windows": "D:\\Users\\YourName\\Documents\\ide_sessions",
     "macOS": "/Users/yourname/Documents/ide_sessions",
@@ -9,6 +15,7 @@
   "_notes": [
     "Windows路径需要使用双反斜杠 \\\\ 转义",
     "macOS/Linux使用正斜杠 /",
-    "可以使用 ~ 代表用户主目录（仅macOS/Linux）"
+    "可以使用 ~ 代表用户主目录（仅macOS/Linux）",
+    "在MCP配置文件中，可以通过env设置MCP_SESSION_BASE_DIR环境变量"
   ]
 }
