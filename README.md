@@ -31,7 +31,7 @@ base_dir/
 ```
 
 ## 安装
-
+从github克隆下载项目后，在下载目录执行：
 ```bash
 npm install
 ```
