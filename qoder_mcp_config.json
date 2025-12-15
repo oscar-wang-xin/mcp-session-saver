@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "node",
+      "args": ["d:\\Server\\www\\_code\\mcp_save_session\\index.js"]
+    }
+  }
+}

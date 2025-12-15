@@ -1,0 +1,31 @@
+# Test files
+test.js
+test_sessions/
+sessions/
+
+# Development files
+example.js
+qoder_mcp_config.json
+
+# Git files
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node modules
+node_modules/
+
+# Temporary files
+*.tmp
+*.temp

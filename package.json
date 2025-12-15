@@ -1,0 +1,66 @@
+{
+  "name": "mcp-session-saver",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol (MCP) service for saving session records to markdown files, organized by IDE, date, and description",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "mcp-session-saver": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "session",
+    "save",
+    "markdown",
+    "session-management",
+    "ide",
+    "ai-ide",
+    "qoder",
+    "claude",
+    "claude-desktop",
+    "cursor",
+    "windsurf",
+    "codeium",
+    "cline",
+    "vscode",
+    "copilot",
+    "aider",
+    "continue",
+    "tabnine",
+    "trae",
+    "codebuddy",
+    "ai-assistant",
+    "code-assistant",
+    "session-recorder",
+    "conversation-saver"
+  ],
+  "author": "Oscar Wang <164938@qq.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oscar-wang-xin/mcp-session-saver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oscar-wang-xin/mcp-session-saver/issues"
+  },
+  "homepage": "https://github.com/oscar-wang-xin/mcp-session-saver#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "files": [
+    "index.js",
+    "README.md",
+    "USAGE.md",
+    "LICENSE",
+    "config.example.json"
+  ]
+}
