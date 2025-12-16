@@ -1,6 +1,6 @@
 {
   "name": "mcp-session-saver",
-  "version": "1.2.1",
+  "version": "1.3.1",
   "description": "A Model Context Protocol (MCP) service for saving session records to markdown files, organized by IDE, date, and description",
   "main": "index.js",
   "type": "module",
@@ -9,7 +9,13 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "node test.js"
+    "test": "node test/test.js",
+    "test:unit": "node test/test-unit.js",
+    "test:integration": "node test/test-integration.js",
+    "test:performance": "node test/test-performance.js",
+    "test:mcp": "node test/test-mcp-connection.js",
+    "test:edge": "node test/test-edge-cases.js",
+    "test:all": "npm run test:unit && npm run test:edge && npm run test:integration && npm run test:performance"
   },
   "keywords": [
     "mcp",
@@ -18,6 +24,9 @@
     "save",
     "markdown",
     "session-management",
+    "i18n",
+    "internationalization",
+    "multilingual",
     "ide",
     "ai-ide",
     "qoder",
@@ -34,6 +43,7 @@
     "tabnine",
     "trae",
     "codebuddy",
+    "lingma",
     "ai-assistant",
     "code-assistant",
     "session-recorder",
@@ -58,8 +68,13 @@
   },
   "files": [
     "index.js",
+    "utils.js",
+    "i18n.js",
+    "configs/",
+    "tools/",
+    "docs/",
     "README.md",
-    "USAGE.md",
+    "README-zh.md",
     "LICENSE",
     "config.example.json"
   ]

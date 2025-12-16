@@ -1,48 +1,20 @@
 import fs from 'fs/promises';
 import path from 'path';
-
-/**
- * 格式化日期为目录名
- */
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  
-  return `${year}-${month}-${day}`;
-}
-
-/**
- * 格式化时间为文件名前缀
- */
-function formatTime(date) {
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  
-  return `${hours}-${minutes}-${seconds}`;
-}
-
-/**
- * 确保目录存在
- */
-async function ensureDirectory(dirPath) {
-  try {
-    await fs.mkdir(dirPath, { recursive: true });
-  } catch (error) {
-    if (error.code !== 'EEXIST') {
-      throw error;
-    }
-  }
-}
+import {
+  formatDate,
+  formatTime,
+  ensureDirectory,
+  sanitizeFilename,
+  buildMarkdownContent
+} from '../utils.js';
 
 /**
  * 保存会话到Markdown文件
  */
 async function saveSession(baseDir, ideName, sessionDescription, content, sessionTime = new Date()) {
   // 清理文件名中的非法字符
-  const cleanIdeName = ideName.replace(/[<>:"/\\|?*]/g, '_');
-  const cleanDescription = sessionDescription.replace(/[<>:"/\\|?*]/g, '_');
+  const cleanIdeName = sanitizeFilename(ideName);
+  const cleanDescription = sanitizeFilename(sessionDescription);
   
   // 格式化日期作为目录名
   const dateDir = formatDate(sessionTime);
@@ -57,16 +29,7 @@ async function saveSession(baseDir, ideName, sessionDescription, content, sessio
   const filePath = path.join(sessionDir, fileName);
   
   // 构建Markdown内容
-  const mdContent = `# ${sessionDescription}
-
-**IDE:** ${ideName}  
-**日期:** ${formatDate(sessionTime)}  
-**时间:** ${sessionTime.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}
-
----
-
-${content}
-`;
+  const mdContent = buildMarkdownContent(sessionDescription, ideName, sessionTime, content);
   
   // 写入文件
   await fs.writeFile(filePath, mdContent, 'utf-8');

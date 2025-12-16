@@ -1,9 +1,12 @@
 # Test files
-test.js
+test/
 test_sessions/
+test_sessions_new/
+test_performance/
 sessions/
 
 # Development files
+dev/
 example.js
 qoder_mcp_config.json
 

@@ -4,5 +4,9 @@ node_modules/
 .env
 sessions/
 test_sessions/
+test_sessions_new/
+test_performance/
 config.json
-qoder_mcp_config.json
+
+# 开发文档目录（优化总结等）
+dev/

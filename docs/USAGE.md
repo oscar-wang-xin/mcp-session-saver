@@ -4,6 +4,194 @@
 
 MCP Session Saver 是一个模型上下文协议（MCP）服务，用于将会话记录保存为Markdown文件。它会自动按照**IDE名称、日期、会话描述**组织文件结构。
 
+## 🎯 如何正确使用 MCP 工具
+
+### MCP 工具的工作原理
+
+MCP（Model Context Protocol）是一个客户端-服务器架构：
+
+```
+┌─────────────┐         ┌──────────────────┐         ┌─────────────┐
+│             │         │                  │         │             │
+│  AI IDE     │ ◄─────► │  MCP 服务器      │ ◄─────► │  文件系统   │
+│ (Qoder等)   │  JSON   │ (session-saver)  │  I/O    │             │
+│             │  RPC    │                  │         │             │
+└─────────────┘         └──────────────────┘         └─────────────┘
+```
+
+**关键点**：
+- ✅ MCP 工具必须通过 **MCP 客户端**（如 Qoder、Claude Desktop）调用
+- ✅ 工具在 MCP 服务器中运行，利用所有优化功能（缓存、并发等）
+- ❌ 不能直接运行 `index.js` 来保存会话（它只是启动服务器等待连接）
+
+### ✅ 正确的使用方式
+
+#### 方式1：在 AI IDE 中使用（推荐）
+
+**步骤1：配置 MCP 服务**
+
+在 Qoder 的配置文件中添加：
+
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "node",
+      "args": ["d:\\Server\\www\\_code\\mcp-session-saver\\index.js"]
+    }
+  }
+}
+```
+
+**步骤2：重启 IDE**
+
+完全关闭并重新打开 Qoder，让配置生效。
+
+**步骤3：验证工具已加载**
+
+在对话中询问：
+```
+你有哪些可用的工具？
+```
+
+应该能看到 `save_session`、`list_sessions`、`read_session`、`delete_session`、`search_sessions` 等工具。
+
+**步骤4：使用自然语言调用**
+
+直接在对话中说：
+
+```
+保存当前会话
+```
+
+或更详细：
+
+```
+请保存当前会话到默认目录
+IDE: Qoder
+描述: MCP工具使用指南讨论
+```
+
+Qoder 会自动：
+1. 识别这是保存会话的请求
+2. 调用 `save_session` MCP 工具
+3. 工具执行（利用目录缓存、性能优化等）
+4. 返回保存结果
+
+#### 方式2：通过编程方式调用（开发/测试）
+
+如果您想测试或通过代码调用 MCP 工具：
+
+**运行示例程序**：
+```bash
+node example.js
+```
+
+这个示例展示了如何：
+- 创建 MCP 客户端
+- 连接到 session-saver 服务器
+- 调用各种工具（save_session、list_sessions 等）
+- 处理返回结果
+
+**示例代码片段**：
+```javascript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+
+// 创建客户端并连接
+const client = new Client({ name: 'my-client', version: '1.0.0' }, { capabilities: {} });
+const transport = new StdioClientTransport({ command: 'node', args: ['index.js'] });
+await client.connect(transport);
+
+// 调用工具
+const result = await client.request({
+  method: 'tools/call',
+  params: {
+    name: 'save_session',
+    arguments: {
+      ide_name: 'VSCode',
+      session_description: '测试会话',
+      content: '# 会话内容...'
+    }
+  }
+});
+
+console.log(result.content[0].text);
+```
+
+### ❌ 错误的使用方式
+
+**不要**直接运行服务器文件：
+```bash
+# ❌ 错误 - 这只会启动服务器等待连接，不会保存任何内容
+node index.js
+```
+
+**不要**绕过 MCP 直接操作文件：
+```javascript
+// ❌ 错误 - 这绕过了 MCP 工具的所有优化
+import fs from 'fs';
+fs.writeFileSync('session.md', content);
+```
+
+**原因**：
+- 绕过 MCP 工具会失去所有性能优化（目录缓存、并发处理等）
+- 无法利用工具的验证和错误处理机制
+- 不符合 MCP 协议的设计理念
+
+### 📊 性能优势
+
+使用 MCP 工具的性能优势（v1.3.1）：
+
+| 功能 | 传统方式 | MCP 工具 | 提升 |
+|------|---------|---------|------|
+| 单次保存 | ~20-50ms | ~1.79ms | **10-28倍** |
+| 连续100次保存 | ~5000ms | ~179ms | **28倍** |
+| 目录重复创建 | 每次检查 | 缓存避免99% | **避免99次** |
+| 吞吐量 | ~50个/秒 | ~558个/秒 | **11倍** |
+
+### 🔧 故障排除
+
+**问题1：IDE 中看不到工具**
+
+检查清单：
+- [ ] MCP 配置文件格式正确（JSON 语法）
+- [ ] 路径使用绝对路径
+- [ ] Node.js 在系统 PATH 中
+- [ ] 已完全重启 IDE
+
+解决方案：
+```bash
+# 验证 Node.js 可用
+node --version
+
+# 验证工具文件存在
+ls d:\Server\www\_code\mcp-session-saver\index.js
+
+# 查看 IDE 的 MCP 日志（如果有）
+```
+
+**问题2：调用工具时出错**
+
+常见错误及解决：
+```
+错误: "路径不能为空"
+→ 解决: 配置 MCP_SESSION_BASE_DIR 或传入 base_dir 参数
+
+错误: "路径不能包含 '..' 字符"
+→ 解决: 使用绝对路径或不包含 .. 的相对路径
+
+错误: "会话内容过大"
+→ 解决: 内容限制为 10MB，请分割大型会话
+```
+
+**问题3：性能不如预期**
+
+检查：
+- 确保使用的是 v1.3.1 或更高版本（包含性能优化）
+- 连续保存到同一目录时性能最佳（目录缓存生效）
+- 查看是否有磁盘 I/O 瓶颈
+
 ### 新特性！
 
 - ✨ **配置文件支持**: 通过 `config.json` 一次配置默认路径，多次使用无需重复指定

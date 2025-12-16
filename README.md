@@ -1,27 +1,40 @@
 # 🎉 MCP Session Saver
 
-一个可以保存会话记录的MCP服务，会话内容能够保存到指定目录下，按照**IDE名称、日期、会话描述**存储为Markdown文件。
+[English](README.md) | [简体中文](README-zh.md)
 
-## ✨ 主要功能
+An MCP service for saving session records. Session content can be saved to a specified directory and stored as Markdown files organized by **IDE name, date, and session description**.
 
-- 📝 **保存会话记录** - 将 AI 对话保存为 Markdown 文件
-- 📁 **智能组织** - 按 IDE/日期/描述自动分类
-- 🔍 **会话列表** - 支持按 IDE 和日期筛选查看
-- 🌐 **多 IDE 支持** - 兼容 Qoder、Claude、Cursor、Windsurf、Trae、Codebuddy 等支持mcp服务的ide
+## ✨ Key Features
 
-## 📦 安装使用
-### 通过 npm 安装
-```bash
-npm install mcp-session-saver
-# 或全局安装
-npm install -g mcp-session-saver
-# 或直接使用 npx（无需安装）
-npx mcp-session-saver
+- 📝 **Save Session Records** - Save AI conversations as Markdown files
+- 📁 **Smart Organization** - Automatically categorized by IDE/date/description
+- 🔍 **Session Management** - Read, search, and delete sessions
+- 🌐 **Multi-IDE Support** - Compatible with Qoder, Cursor, Claude Desktop, Windsurf, Trae, Codebuddy, Lingma, Continue, Aider, and more
+
+## 🚀 Quick Start
+
+### Method 1: Using npx (Recommended)
+
+No installation required. Simply add to your IDE's MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "npx",
+      "args": ["-y", "mcp-session-saver"]
+    }
+  }
+}
 ```
 
-## 📝 MCP客户端设置
-运行npm安装后，在你的 AI IDE 配置文件中添加：
+### Method 2: Global Installation
 
+```bash
+npm install -g mcp-session-saver
+```
+
+MCP Configuration:
 ```json
 {
   "mcpServers": {
@@ -32,104 +45,58 @@ npx mcp-session-saver
 }
 ```
 
-#### 或者使用 npx（无需npm安装）
+### Method 3: Local Installation
+
+```bash
+npm install mcp-session-saver
+```
+
+## 📁 Custom Storage Path (Optional)
+
+Add environment variable in MCP configuration:
 
 ```json
 {
   "mcpServers": {
     "session-saver": {
       "command": "npx",
-      "args": ["mcp-session-saver"]
-    }
-  }
-}
-```
-
-## 📁 修改会话存储位置
-
-#### 方法1：使用配置文件配置
-
-在安装的npm包根目录创建 `config.json` 文件，配置默认会话保存路径：
-
-**Windows:**
-```json
-{
-  "defaultBaseDir": "D:\\Users\\YourName\\Documents\\ide_sessions"
-}
-```
-
-**macOS:**
-```json
-{
-  "defaultBaseDir": "/Users/yourname/Documents/ide_sessions"
-}
-```
-
-**Linux:**
-```json
-{
-  "defaultBaseDir": "/home/yourname/Documents/ide_sessions"
-}
-```
-
-**也可以使用快捷路径（macOS/Linux）:**
-```json
-{
-  "defaultBaseDir": "~/Documents/ide_sessions"
-}
-```
-
-**注意事项：**
-- ✅ Windows 路径需要使用双反斜杠 `\\` 转义
-- ✅ macOS/Linux 使用正斜杠 `/`
-- ✅ macOS/Linux 可以使用 `~` 代表用户主目录
-
-
-#### 方法2：在MCP配置文件中设置
-
-增加环境变量`MCP_SESSION_BASE_DIR`,设置默认会话保存目录。例如：
-
-```json
-{
-  "mcpServers": {
-    "session-saver": {
-      "command": "mcp-session-saver",
+      "args": ["-y", "mcp-session-saver"],
       "env": {
-        "MCP_SESSION_BASE_DIR": "D:\\Administrator\\Documents\\ide_sessions"
+        "MCP_SESSION_BASE_DIR": "D:\\MyProjects\\sessions"
       }
     }
   }
 }
 ```
 
-其中：
-- **MCP_SESSION_BASE_DIR** 用于指定会话保存的基础目录
-- 如果同时传入 `base_dir` 参数，则以 `base_dir` 为准
-- 如果未配置环境变量且没有 `config.json`，则使用默认路径 `~/Documents/ide_sessions`
-- 生效优先级是 `base_dir`参数 > MCP_SESSION_BASE_IDR > config.json > 默认路径~/Documents/ide_sessions
+## 🎯 How to Use
 
+After configuration, simply say in your IDE:
 
-
-## 🎯 使用方法
-确认启动了MCP服务后，直接在IDE会话中输入相应指令：
-```bash
-> 存储当前会话 / 列出已保存会话 / 列出所有会话 / 列出cursor会话 ...
+```
+Save current session
+List all sessions
+Search session content
 ```
 
-## 📚 文档
-- [README.md](README.md) - 项目说明
-- [USAGE.md](USAGE.md) - 详细使用指南
-- [npm 包](https://www.npmjs.com/package/mcp-session-saver) - npm 主页
+## 📚 Documentation
 
-## 🛠️ 技术栈
+- [**Quick Setup Tools**](tools/) - One-click configuration scripts
+- [**Detailed Usage Guide**](docs/USAGE.md) - Complete usage instructions
+- [**Multi-IDE Setup**](docs/MULTI_IDE_SETUP.md) - Configuration for Cursor, Claude, and other IDEs
+- [**Qoder Configuration**](docs/QODER_CONFIG_GUIDE.md) - Qoder-specific guide
+- [**Internationalization**](docs/I18N.md) - Multi-language support guide
+
+## 🛠️ Tech Stack
+
 - JavaScript (ES Module)
 - @modelcontextprotocol/sdk
 - Node.js >= 16.0.0
 
-## 📊 包信息
-- 包名: mcp-session-saver
-- License: MIT
+## 📝 License
 
-## 🙏 反馈与贡献
-欢迎提交 Issues 和 Pull Requests！
-完整更新日志请查看 CHANGELOG
+MIT
+
+## 👏 Contributing
+
+Issues and Pull Requests are welcome!
