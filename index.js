@@ -409,7 +409,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'save_session',
-        description: '【保存会话】当用户说"保存当前会话"、"存储会话"、"记录对话"、"保存对话内容"等时调用。将AI对话内容保存为Markdown文件，按IDE/日期自动分类存储。触发词：保存、存储、记录、归档会话/对话/聊天',
+        description: '【保存会话】当用户说"保存当前会话"、"存储会话"、"记录对话"、"保存对话内容"等时调用。将AI对话内容保存为Markdown文件，按IDE/日期自动分类存储。\n\n⚠️ 调用前必须执行的步骤：\n1. AI助手必须先在内部整理完整的对话历史\n2. 将所有用户问题和AI回答按时间顺序格式化\n3. 使用清晰的Markdown格式（# 用户、# AI助手等标题）\n4. 将整理好的完整对话作为content参数传入\n\n❌ 禁止行为：\n- 禁止传入对话摘要或总结\n- 禁止遗漏任何历史问答\n- 禁止使用简化格式\n\n✅ 正确格式示例：\n# 用户\n[第一个问题的完整内容...]\n\n# AI助手\n[第一个回答的完整内容...]\n\n# 用户  \n[第二个问题的完整内容...]\n\n# AI助手\n[第二个回答的完整内容...]\n\n触发词：保存、存储、记录、归档会话/对话/聊天',
         inputSchema: {
           type: 'object',
           properties: {
@@ -427,7 +427,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             content: {
               type: 'string',
-              description: '会话内容(完整的对话记录，支持Markdown格式)',
+              description: '会话内容 - 必须是完整的原始对话记录，包含所有用户问题和AI回答。\n\n⚠️ 重要要求：\n1. 必须包含从对话开始到现在的所有交互内容\n2. 保持原始对话的完整性，不要总结或精简\n3. 使用清晰的Markdown格式标记每轮对话\n4. 保留代码块、列表、表格等所有格式\n\n✅ 标准格式：\n# 用户\n[完整问题内容，包括所有细节]\n\n# AI助手\n[完整回答内容，包括所有代码、解释、建议]\n\n# 用户\n[下一个问题...]\n\n# AI助手\n[下一个回答...]\n\n❌ 错误示例：\n- "用户询问了关于X的问题，AI回答了Y"（这是总结，不是完整对话）\n- 只包含最近几轮对话（遗漏了历史内容）',
             },
             session_time: {
               type: 'string',
@@ -684,5 +684,7 @@ main().catch((error) => {
   console.error('服务启动失败:', error);
   process.exit(1);
 });
+
+
 
 
