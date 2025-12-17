@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "session-saver": {
+      "command": "npx",
+      "args": ["-y", "mcp-session-saver"],
+      "env": {
+        "MCP_SESSION_BASE_DIR": "~/Documents/qoder_sessions"
+      }
+    }
+  }
+}
+

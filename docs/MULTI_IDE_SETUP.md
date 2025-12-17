@@ -88,7 +88,7 @@ npm install -g mcp-session-saver
 5. 验证：在对话中问 "你有哪些可用的工具？"
 
 #### 快速配置
-直接复制 [`configs/qoder-mcp-config.json`](./configs/qoder-mcp-config.json) 的内容到配置文件。
+直接复制 [`configs/qoder-mcp-config.json`](../configs/qoder-mcp-config.json) 的内容到配置文件。
 
 ---
 

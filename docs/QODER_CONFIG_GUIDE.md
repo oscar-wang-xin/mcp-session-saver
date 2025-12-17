@@ -21,7 +21,7 @@ Qoder 的 MCP 配置文件通常位于以下位置之一：
 
 **方式A：复制配置内容**
 
-1. 打开本目录下的 `qoder-mcp-config.json` 文件
+1. 打开仓库中的 `configs/qoder-mcp-config.json` 文件
 2. 复制全部内容
 3. 找到 Qoder 的 MCP 配置文件
 4. 如果文件已存在，将 `session-saver` 部分添加到 `mcpServers` 对象中
